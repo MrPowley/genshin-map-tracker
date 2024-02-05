@@ -1,0 +1,11 @@
+download_map.py
+assets/map_kp_des.pkl
+test.py
+assets/minimap.png
+results/MINI_MAP_KEYPOINTS.png
+results/MATCHES.png
+results/WORLD_MAP_KEYPOINTS.png
+test_assets/minimap.png
+test_assets/Capture d’écran (1513).png
+data/map.yml
+assets/map_url.txt
