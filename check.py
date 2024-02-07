@@ -4,6 +4,8 @@ from os.path import exists
 import pickle
 import time
 
+import pyautogui
+
 # Number of "good" points" calculated
 MIN_MATCH_COUNT = 7
 
@@ -78,3 +80,24 @@ def locate(minimap):
             return -9999, -9999
     else:
         return -9999, -9999
+
+# Function to check if main gui is visible: check if minimap is visible
+def check_for_game_gui():
+    # Taking a screeshot of the little message icon in the bottom left corner
+    gui = pyautogui.screenshot(region=(52, 1364, 52, 42))
+    # Converting image to array
+    gui = cv2.cvtColor(np.array(gui), cv2.COLOR_RGB2GRAY)
+    # Converting image to binary
+    _, binary_image = cv2.threshold(gui, 127, 255, cv2.THRESH_BINARY)
+    # Gettings contours of image
+    contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for contour in contours:
+        epsilon = 0.02 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        # Making sure there's at least 4 sides (rectangle)
+        if len(approx) == 4:
+            x, y, w, h = cv2.boundingRect(contour)
+            # Cheking if they're at least a minimum lenght(a little less than the true size)
+            if w > 45 and h > 35:
+                return True
+    return False

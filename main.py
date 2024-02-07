@@ -1,11 +1,12 @@
 from os.path import exists
 import time
 import pyautogui
-import locate
+import check
 from selenium import webdriver
 import keyboard
-from cv2 import cvtColor, COLOR_RGB2GRAY
+from cv2 import cvtColor, COLOR_RGB2GRAY, SIFT_create
 from numpy import array
+import pickle
 
 # URL of Genshin's interactive map
 URL = "https://act.hoyolab.com/ys/app/interactive-map/?lang=en-us#/map/2?center=0.00,0.00"
@@ -18,19 +19,22 @@ player_location = 0, 0
 def locate_minimap():
     # Get selenium webdriver
     interactive_map = open_interactive_map()
-
     while True:
-        # Screenshot minimap
-        minimap = pyautogui.screenshot(region=(143, 73, 184, 184))
-        # Converts pyautogui screeshot to opencv image
-        minimap = cvtColor(array(minimap), COLOR_RGB2GRAY)
-        # Get player position back
-        player_location = locate.locate(minimap)
-        x, y = player_location[0], player_location[1]
-        # Check if program could find location
-        if x != -9999:
-            # Update interactive map with new coordinates
-            update_map_coordinates(interactive_map, x, y)
+        if check.check_for_game_gui():
+            # Screenshot minimap
+            minimap = pyautogui.screenshot(region=(143, 73, 184, 184))
+            # Converts pyautogui screeshot to opencv image
+            minimap = cvtColor(array(minimap), COLOR_RGB2GRAY)
+            # Get player position back
+            player_location = check.locate(minimap)
+            x, y = player_location[0], player_location[1]
+            # Check if program could find location
+            if x != -9999:
+                # Update interactive map with new coordinates
+                update_map_coordinates(interactive_map, x, y)
+        else:
+            print("no minimap")
+            time.sleep(2)
         time.sleep(SLEEP_TIME)
 
 # Function to update interactive map coordinates
@@ -58,6 +62,7 @@ def open_interactive_map():
             redDot.style.position = "fixed";
             redDot.style.top = "50%";
             redDot.style.left = "50%";
+            redDot.style.borderRadius = "50%";
             redDot.style.transform = "translate(-50%, -50%)";
             document.body.appendChild(redDot);
             """

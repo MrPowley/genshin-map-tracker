@@ -10,3 +10,5 @@ test_assets/Capture d’écran (1513).png
 data/map.yml
 assets/map_url.txt
 test2.py
+test.png
+__pycache__/
