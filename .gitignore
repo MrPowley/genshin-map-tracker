@@ -13,3 +13,7 @@ test2.py
 test.png
 __pycache__
 screenshot.png
+assets/list/list.json
+assets/list/points.json
+notes.txt
+assets/list/label.json
