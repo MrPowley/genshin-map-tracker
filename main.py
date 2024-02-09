@@ -7,35 +7,43 @@ import keyboard
 from cv2 import cvtColor, COLOR_RGB2GRAY, SIFT_create
 from numpy import array
 import pickle
+from win32api import GetSystemMetrics
 
 # URL of Genshin's interactive map
 URL = "https://act.hoyolab.com/ys/app/interactive-map/?lang=en-us#/map/2?center=0.00,0.00"
 
 # Optionnal sleep time betwin checks
-SLEEP_TIME = 0
+SLEEP_TIME = 3
 player_location = 0, 0
 
 # Fonction to continusly locate player
-def locate_minimap():
+def locate_minimap(w, h):
     # Get selenium webdriver
     interactive_map = open_interactive_map()
     while True:
         if check.check_for_game_gui():
-            # Screenshot minimap
-            minimap = pyautogui.screenshot(region=(143, 73, 184, 184))
-            # Converts pyautogui screeshot to opencv image
-            minimap = cvtColor(array(minimap), COLOR_RGB2GRAY)
+            minimap = screenshot(w, h)
             # Get player position back
-            player_location = check.locate(minimap)
-            x, y = player_location[0], player_location[1]
+            player_x, player_y = check.locate(minimap)
             # Check if program could find location
-            if x != -9999:
+            if player_x != -9999:
                 # Update interactive map with new coordinates
-                update_map_coordinates(interactive_map, x, y)
+                update_map_coordinates(interactive_map, player_x, player_y)
         else:
             print("no minimap")
             time.sleep(2)
         time.sleep(SLEEP_TIME)
+
+def get_screen_res():
+    w, h = GetSystemMetrics(0), GetSystemMetrics(1)
+    return w, h
+
+def screenshot(w, h):
+    x, y, c = int(4.80/100*w), int(4.51/100*h), int(14.17/100*h)
+    screenshot = pyautogui.screenshot(region=(x, y, c, c))
+    screenshot = cvtColor(array(screenshot), COLOR_RGB2GRAY)
+    return screenshot
+
 
 # Function to update interactive map coordinates
 def update_map_coordinates(driver, x : float, y : float):
@@ -70,9 +78,10 @@ def open_interactive_map():
     return driver
 
 # Main function
-def main():  
+def main():
     time.sleep(SLEEP_TIME)
-    locate_minimap()
+    w, h = get_screen_res()
+    locate_minimap(w, h)
     
     
 if __name__ == "__main__":

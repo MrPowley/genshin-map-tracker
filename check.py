@@ -74,7 +74,7 @@ def locate(minimap):
             player_coordinates = center_of_map[0][0].tolist()
             # Print compute time
             print("Compute time", time.monotonic() - t1,"s")
-            return player_coordinates
+            return player_coordinates[0], player_coordinates[1]
         except Exception:
             # If any error happens, returning these off the map coordinates
             return -9999, -9999

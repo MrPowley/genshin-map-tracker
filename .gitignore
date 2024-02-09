@@ -11,4 +11,5 @@ data/map.yml
 assets/map_url.txt
 test2.py
 test.png
-__pycache__/
+__pycache__
+screenshot.png
